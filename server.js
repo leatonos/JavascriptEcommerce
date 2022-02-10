@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
       }else{
           res.write(data)
       }
-  res.end();
+  res.end('sample');
   })
 });
 
