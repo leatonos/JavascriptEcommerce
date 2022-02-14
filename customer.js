@@ -6,6 +6,7 @@ var db = new sqlite3.Database(
   (err) => (err ? console.error(err) : console.log("Connection Successful!"))
 );
 
+
 class Customer {
   constructor() {
     this.CustomerName = "";
@@ -16,20 +17,46 @@ class Customer {
   }
 }
 
+class Product{
+  constructor(productId,productName,productPrice,productDescription, productImage){
+      this.productId = productId;
+      this.productName = productName;
+      this.productPrice = productPrice;
+      this.productDescription = productDescription;
+      this.productImage = productImage;
+  }
+}
+
 const express = require('express')
 const app = express()
+
+app.set('view engine', 'ejs');
+
+
+//Images and other assets
+app.use(express.static('public'));
+
 
 app.use(express.urlencoded({
     extended: true
   }))
 
-app.get('/', function (req, res) {
+
+// Index page
+app.get('/', function(req, res) {
+
+var homePageProducts = productList;
+
+  res.render('index',{
+    homePageProducts: homePageProducts
+  });
+});
+
+//Account page
+app.get('/account', function (req, res) {
     res.sendFile(__dirname + '/account.html');
 })
 
-app.get('/home', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-})
 app.get('/product', function (req, res) {
     res.sendFile(__dirname + '/product-page.html');
 })
@@ -52,7 +79,7 @@ app.post("/log-in",function(req,res){
     res.redirect(`/`);
 
 });
-app.listen(3200)
+app.listen(3000)
 
 function newRecord(customer) {
     console.log(customer.CustomerName);
@@ -83,7 +110,7 @@ function logIn(login, res){
   db.each("SELECT * FROM Customers", function (err, row) {
 
     if(login.CustomerEmail == row.CustomerEmail && login.CustomerPassword == row.CustomerPassword){
-
+      console.log(row.CustomerName);
     }
     
     /*
@@ -97,8 +124,33 @@ function logIn(login, res){
   //db.close();
 }
 
-/**
- db.each("SELECT * FROM Customers", function (err, row) {
-      console.log(row);
-    });
- */
+
+  /* Products */
+  let productList = [];
+  
+  function showAllProducts(rows){
+      
+      rows.forEach((row)=>{
+          productList.push(new Product(row.ProductID,row.ProductName,row.ProductPrice,row.ProductDescription, row.ProductImage));
+      });
+      productList.forEach((product)=>{
+          console.log(product.productId," ",product.productName," ",product.productPrice," ",product.productDescription," ");
+      });
+  }
+  
+  function getAllProduct(){
+      const db = new sqlite3.Database('./sqlite_database/database.db',sqlite3.OPEN_READWRITE,(err)=>{
+          err ? console.log(err.message) : console.log("Connection successful")
+      });
+      const sql = "select * from products";
+      db.all(sql,(err,rows)=>{
+          if(err) return console.log(err.message);
+          showAllProducts(rows);
+      });
+      
+      db.close((err)=>{
+          if(err) return console.log(err.message);
+      });        
+  }
+  
+  getAllProduct();
