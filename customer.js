@@ -52,14 +52,17 @@ var homePageProducts = productList;
   });
 });
 
+app.get('/product', function (req, res) {
+  res.render('product-page',{
+  });
+})
+
 //Account page
 app.get('/account', function (req, res) {
     res.sendFile(__dirname + '/account.html');
 })
 
-app.get('/product', function (req, res) {
-    res.sendFile(__dirname + '/product-page.html');
-})
+
 
 app.post("/newRecord",function(req,res){
     console.log(req.body);
