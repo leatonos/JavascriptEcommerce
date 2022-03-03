@@ -52,6 +52,7 @@ var homePageProducts = productList;
   });
 });
 
+//Product Page
 app.get('/product', function (req, res) {
   res.render('product-page',{
   });
@@ -59,11 +60,17 @@ app.get('/product', function (req, res) {
 
 //Account page
 app.get('/account', function (req, res) {
-    res.sendFile(__dirname + '/account.html');
+    res.render('account',{
+    });
 })
 
+//Cart page
+app.get('/cart', function (req, res) {
+  res.render('cart',{
+  });
+})
 
-
+//Create Customer Button
 app.post("/newRecord",function(req,res){
     console.log(req.body);
     if (req.body) {
@@ -72,6 +79,7 @@ app.post("/newRecord",function(req,res){
     res.redirect(`/`);
 });
 
+//Login Button
 app.post("/log-in",function(req,res){
     
     if (req.body) {
@@ -82,6 +90,8 @@ app.post("/log-in",function(req,res){
     res.redirect(`/`);
 
 });
+
+//Server Set Up
 app.listen(3000)
 
 function newRecord(customer) {
